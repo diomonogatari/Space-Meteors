@@ -15,5 +15,15 @@ namespace Assets.Scripts
             public const string submit = "Submit";
             public const string cancel = "Cancel";
         }
+
+        public static class GameSceneObjects
+        {
+            public const string shootingLocation = "ShootingLocation";
+        }
+
+        public static class CollidableNames
+        {
+            public const string missileInstances = "Missile(Clone)";
+        }
     }
 }

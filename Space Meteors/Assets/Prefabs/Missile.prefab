@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2434258932477813897}
   - component: {fileID: 2434258932477813899}
   - component: {fileID: 2434258932477813898}
+  - component: {fileID: 2407224224334895391}
   m_Layer: 0
   m_Name: Missile
   m_TagString: Bullet
@@ -70,6 +71,19 @@ CapsuleCollider2D:
   m_Offset: {x: -0.005569339, y: -0.0037128925}
   m_Size: {x: 0.084095076, y: 0.725245}
   m_Direction: 0
+--- !u!114 &2407224224334895391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2434258932477813896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1ef5c323f8aa22489853d4f91f8cca6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyInSeconds: 5
 --- !u!1 &2434258934069760673
 GameObject:
   m_ObjectHideFlags: 0

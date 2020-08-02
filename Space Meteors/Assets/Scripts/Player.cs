@@ -14,6 +14,9 @@ public class Player : MonoBehaviour, IActions, IControllable
     public GameObject missileObject;
     [Range(1, 5)]
     public uint maxLives = 3;
+    public float fireCooldown = 1.5f;
+    [Range(1f, 10f)]
+    public float missileSpeed = 5.0f;
 
     #endregion
 
@@ -22,9 +25,10 @@ public class Player : MonoBehaviour, IActions, IControllable
 
     /*We can get xMinWorldBounds by multiplying + -1 of max as the value is the negative solution*/
     private float[] worldBounds = { -8.454f, 8.454f };
-    //private Rigidbody2D rgbPlayer;
     private uint currentLives;
-
+    private float currentCooldown = 0f;
+    private bool isDead = false;
+    private Transform shootingLocation;
 
     #endregion
 
@@ -32,18 +36,22 @@ public class Player : MonoBehaviour, IActions, IControllable
     private void Start()
     {
         currentLives = maxLives;
-        //rgbPlayer = playerObject.GetComponent<Rigidbody2D>();
+
+        /*Get the shootingLocation*/
+        shootingLocation = playerObject.transform.Find(Constants.GameSceneObjects.shootingLocation);
+
     }
 
     // Update is called once per frame
     private void FixedUpdate()
     {
+        FiringCooldown(); //Time never stops going forward
+
         /*Check for Input*/
         if (IsPlayerMoving())
             Move();
         if (IsPlayerFiring())
             Fire();
-
     }
     #region Movement Methods
 
@@ -82,7 +90,7 @@ public class Player : MonoBehaviour, IActions, IControllable
     public bool CanMove(float[] worldBounds, GameObject obj)
     {
         /*if the object position is between the lowest bound and the highest bound then he can move*/
-        if (obj.transform.position.x >= worldBounds[0] && obj.transform.position.x <= worldBounds[1])
+        if (obj.transform.position.x >= worldBounds[0] && obj.transform.position.x <= worldBounds[1] && !isDead)
             return true;
         else
             return false;
@@ -93,19 +101,48 @@ public class Player : MonoBehaviour, IActions, IControllable
     #region Firing Methods
     public bool IsPlayerFiring()
     {
-        return false;
+        //If the player is pressing the fire keys then he is trying to fire
+        if (Input.GetButton(Constants.InputAxis.fire1))
+        {
+            return true;
+        }
+        else
+            return false;
     }
 
     public void Fire()
     {
-        Debug.Log("Non implemented method fired!!!");
+        if (CanFire())
+        {
+            //instanciate a missile from the shootingLocation moving at a certain speed in Y up direction
+            GameObject missile = Instantiate(missileObject, shootingLocation.position, shootingLocation.rotation);
+            Rigidbody2D body = missile.GetComponent<Rigidbody2D>();
+
+            body.velocity = transform.TransformDirection(Vector2.up * missileSpeed);
+            ResetCooldown();
+        }
     }
 
+    /*he can only fire after the cooldown has passed*/
     public bool CanFire()
     {
+        if (currentCooldown.Equals(0) && !isDead)
+            return true;
         return false;
+    }
+    private void FiringCooldown()
+    {
+        if (this.currentCooldown > 0f)
+            this.currentCooldown -= Time.fixedDeltaTime;
+
+        if (this.currentCooldown < 0f)
+            this.currentCooldown = 0f;
     }
     #endregion
 
 
+    private void ResetCooldown()
+    {
+        currentCooldown = fireCooldown;
+    }
 }
