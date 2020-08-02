@@ -114,6 +114,7 @@ public class Enemy : MonoBehaviour, IActions
             case Constants.CollidableNames.missileInstances:
                 Destroy(this.gameObject);
                 Destroy(collision.gameObject);
+                gameController.moveCooldown -= 0.055f;//I have 22 rocks and I start at 1.2f cooldown. Every rock that gets shot subtracts a relative equal part to the cooldown (1.2f / 22 = 0.(54)...
                 //this must add points to the score
                 break;
             case Constants.CollidableNames.player:
