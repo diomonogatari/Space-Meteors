@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3076368318814867853}
   - component: {fileID: 1709714429}
   - component: {fileID: 1709714428}
+  - component: {fileID: -8803949675644868194}
   m_Layer: 0
   m_Name: MeteorMissile
   m_TagString: Untagged
@@ -136,12 +137,25 @@ CapsuleCollider2D:
   m_Enabled: 1
   m_Density: 50
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0.010353841, y: 0.00061497703}
   m_Size: {x: 0.81960344, y: 0.92432344}
   m_Direction: 1
+--- !u!114 &-8803949675644868194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3076368318814867852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1ef5c323f8aa22489853d4f91f8cca6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyInSeconds: 5
 --- !u!1001 &8919863655326109892
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -7,6 +7,8 @@ public class Enemy : MonoBehaviour, IActions
 {
 
     public GameObject explosion;
+    public GameObject enemyMissile;
+    public float missileSpeed = 5.0f;
 
     /* meteors bounds
      *      min x:-8.665
@@ -14,29 +16,54 @@ public class Enemy : MonoBehaviour, IActions
      */
     private float[] worldBounds = { -8.665f, 8.42f };
     private bool isDead = false;
+    private float firingCooldown;
+    private Transform shootingLocation;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        firingCooldown = Random.Range(4f, 6.0f);
+        shootingLocation = this.gameObject.transform.Find(Constants.GameSceneObjects.shootingLocation);
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        FiringCooldown(); //Time never stops going forward
+        Fire();
     }
     #region Firing
 
     public bool CanFire()
     {
-        Debug.Log("not implement yet");
+        if (firingCooldown.Equals(0) && !isDead)
+            return true;
         return false;
     }
+    private void FiringCooldown()
+    {
+        if (this.firingCooldown > 0f)
+            this.firingCooldown -= Time.fixedDeltaTime;
 
+        if (this.firingCooldown < 0f)
+            this.firingCooldown = 0f;
+    }
     public void Fire()
     {
-        Debug.Log("not implement yet");
+        if (CanFire())
+        {
+            //instanciate a missile from the shootingLocation moving at a certain speed in Y up direction
+            GameObject missile = Instantiate(enemyMissile, shootingLocation.position, shootingLocation.rotation);
+            Rigidbody2D body = missile.GetComponent<Rigidbody2D>();
+
+            body.velocity = transform.TransformDirection(Vector2.down * missileSpeed);
+            ResetCooldown();
+        }
+    }
+
+    private void ResetCooldown()
+    {
+        firingCooldown = Random.Range(8f, 15f);
     }
 
     #endregion
@@ -45,33 +72,28 @@ public class Enemy : MonoBehaviour, IActions
 
     public bool CanMove(float[] worldBounds, GameObject obj)
     {
-        /*if the object position is between the lowest bound and the highest bound then he can move*/
-        if (obj.transform.position.x >= worldBounds[0] && obj.transform.position.x <= worldBounds[1] && !isDead)
-            return true;
-        else
-            return false;
+        return false;
     }
 
     public void Move()
     {
-        Debug.Log("not implement yet");
+        Debug.Log("not implement");
     }
 
     #endregion
 
-
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        switch (collision.collider.name)
+        var collider = collision.GetComponent<Collider2D>();
+        switch (collider.name)
         {
             case "Missile(Clone)":
                 Destroy(this.gameObject);
-                Destroy(collision.collider.gameObject);
+                Destroy(collision.gameObject);
                 Instantiate(explosion, this.gameObject.transform.position, this.gameObject.transform.rotation);
                 break;
             default:
                 break;
         }
     }
-
 }

@@ -150,6 +150,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explosion: {fileID: 139366, guid: b185c1a9cf067374586d095111b15bd1, type: 3}
+  enemyMissile: {fileID: 3076368318814867852, guid: 7d3ce20672f684f46b745931d304b91b,
+    type: 3}
+  missileSpeed: 5
 --- !u!58 &5175016096347233511
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -160,7 +163,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -0.011984508, y: 0.00000011920929}
