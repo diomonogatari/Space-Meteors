@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour
     public GameObject player; //knowing who the player is is nice. allows me to call his actions :)
     //I don't know who the enemies will be because there will be a lot of them
     public GameObject enemyContainer;
-    public float moveCooldown = 1.0f;
+    public float moveCooldown = 1.2f;
     //The GameController will not know who the enemies are, but the enemies, as they trigger lose conditions, will be able to communicate with the GameController
 
     private float[] worldBounds = { -3.38f, 3.552f };
@@ -18,6 +18,7 @@ public class GameController : MonoBehaviour
     private bool enemyIsMovingLeft = true;
     private bool enemyMovesDown = false;
     private float xMovementOffset = 0.5f;
+    private float yMovementOffset = 0.35f;
 
     // Start is called before the first frame update
     void Start()
@@ -37,12 +38,12 @@ public class GameController : MonoBehaviour
         /*if the object position is between the lowest bound and the highest bound then he can move*/
         if (currentMoveCooldown.Equals(0))
         {
-            if (obj.transform.position.x >= worldBounds[0] && !isPlayerDead && enemyIsMovingLeft) //try move left
+            if (obj.transform.position.x >= worldBounds[0] + xMovementOffset && !isPlayerDead && enemyIsMovingLeft) //try move left
             {
                 //enemyIsMovingLeft = true;
                 return true;
             }
-            else if (obj.transform.position.x <= worldBounds[1] && !isPlayerDead && !enemyIsMovingLeft) //try move right
+            else if (obj.transform.position.x + xMovementOffset <= worldBounds[1] && !isPlayerDead && !enemyIsMovingLeft) //try move right
             {
                 //enemyIsMovingLeft = false;
                 return true;
@@ -60,7 +61,7 @@ public class GameController : MonoBehaviour
     private bool CanMoveDown(float worldBound, GameObject obj)
     {
         /*if the object position is between the lowest bound and the highest bound then he can move*/
-        if (obj.transform.position.x >= worldBound && !isPlayerDead)
+        if (obj.transform.position.y >= worldBound + yMovementOffset && !isPlayerDead)
         {
             return true;
         }
@@ -70,33 +71,25 @@ public class GameController : MonoBehaviour
 
     void Move(GameObject obj)
     {
-        
-        if (CanMoveSides(this.worldBounds, obj))
+        if (enemyMovesDown)
         {
-            if (enemyIsMovingLeft)//move left
-                obj.transform.position -= new Vector3(xMovementOffset, 0, 0); //Moves on ticks
-            else
-                obj.transform.position += new Vector3(xMovementOffset, 0, 0); //Move right
+            obj.transform.position -= new Vector3(0, yMovementOffset, 0); //Moves on ticks
+            enemyMovesDown = !enemyMovesDown;
             ResetMovementCoolDown();
         }
-        else /*else the position is the allowed bound*/
+        else
         {
-            /*if it's on the right side of the screen*/
-            //if (obj.transform.position.x > 0)
-            //    obj.transform.position = new Vector3(worldBounds[1], obj.transform.position.y, 0);//clip on the x position
-            //else/*else he is on the left side*/
-            //    obj.transform.position = new Vector3(worldBounds[0], obj.transform.position.y, 0);//clip on the x position
+            if (CanMoveSides(this.worldBounds, obj))
+            {
+                if (enemyIsMovingLeft)//move left
+                    obj.transform.position -= new Vector3(xMovementOffset, 0, 0); //Moves on ticks
+                else
+                    obj.transform.position += new Vector3(xMovementOffset, 0, 0); //Move right
+                ResetMovementCoolDown();
+            }
         }
-        //else he doesn't move
     }
 
-    /*
-     * Movement is kinda tricky here
-     * 1st you need to know if he wants to move left (original direction)
-     * he will move that direction until he can no longer move (world bounds)
-     * 
-     *
-     */
     void MovementCooldown()
     {
         if (currentMoveCooldown > 0f)

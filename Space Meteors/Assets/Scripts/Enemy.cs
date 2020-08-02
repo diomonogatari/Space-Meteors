@@ -20,12 +20,14 @@ public class Enemy : MonoBehaviour, IActions
     private float randomShootingRange = 8.0f;
     private float shootingOffset = 2.5f;
     private float cooldownOffset = 4.0f;
+    private GameController gameController;
 
     // Start is called before the first frame update
     void Start()
     {
         firingCooldown = Random.Range(randomShootingRange, randomShootingRange + 4f);
         shootingLocation = this.gameObject.transform.Find(Constants.GameSceneObjects.shootingLocation);
+        gameController = this.gameObject.GetComponentInParent<GameController>();
     }
     private void OnDestroy()
     {

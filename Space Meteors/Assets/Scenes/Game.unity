@@ -1199,7 +1199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1214729883}
   enemyContainer: {fileID: 1673703999}
-  moveCooldown: 1.5
+  moveCooldown: 1.2
 --- !u!1 &1022959614
 GameObject:
   m_ObjectHideFlags: 0
