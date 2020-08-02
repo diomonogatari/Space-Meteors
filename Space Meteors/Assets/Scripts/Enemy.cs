@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using Assets.Scripts;
 
 public class Enemy : MonoBehaviour, IActions
@@ -14,31 +15,52 @@ public class Enemy : MonoBehaviour, IActions
      *      min x:-8.665
      *      max x: 8.42 
      */
-    private float[] worldBounds = { -8.665f, 8.42f };
-    private bool isDead = false;
     private float firingCooldown;
     private Transform shootingLocation;
+    private float randomShootingRange = 8.0f;
+    private float shootingOffset = 2.5f;
+    private float cooldownOffset = 4.0f;
 
     // Start is called before the first frame update
     void Start()
     {
-        firingCooldown = Random.Range(4f, 6.0f);
+        firingCooldown = Random.Range(randomShootingRange, randomShootingRange + 4f);
         shootingLocation = this.gameObject.transform.Find(Constants.GameSceneObjects.shootingLocation);
     }
-
+    private void OnDestroy()
+    {
+        Instantiate(explosion, this.gameObject.transform.position, this.gameObject.transform.rotation);
+    }
     // Update is called once per frame
     void Update()
     {
-        FiringCooldown(); //Time never stops going forward
         Fire();
     }
     #region Firing
 
     public bool CanFire()
     {
-        if (firingCooldown.Equals(0) && !isDead)
-            return true;
-        return false;
+        //GetPlayerLocation
+        var c = GameObject.FindGameObjectsWithTag(Constants.Tags.player).First();
+        if (c.gameObject.transform.position.x + cooldownOffset >= this.gameObject.transform.position.x
+                &&                                                                            /*I'm using this because the randomness creates meteor showers that are impossible to dodge*/
+             c.gameObject.transform.position.x - cooldownOffset <= this.gameObject.transform.position.x
+           )
+        {
+            if (firingCooldown.Equals(0)
+                &&
+                c.gameObject.transform.position.x + shootingOffset >= this.gameObject.transform.position.x
+                &&
+                c.gameObject.transform.position.x - shootingOffset <= this.gameObject.transform.position.x
+                ) return true;
+
+            FiringCooldown();
+            return false;
+        }
+        else
+        {
+            return false;
+        }
     }
     private void FiringCooldown()
     {
@@ -63,7 +85,7 @@ public class Enemy : MonoBehaviour, IActions
 
     private void ResetCooldown()
     {
-        firingCooldown = Random.Range(8f, 15f);
+        firingCooldown = Random.Range(randomShootingRange, randomShootingRange + 4f);
     }
 
     #endregion
@@ -87,13 +109,19 @@ public class Enemy : MonoBehaviour, IActions
         var collider = collision.GetComponent<Collider2D>();
         switch (collider.name)
         {
-            case "Missile(Clone)":
+            case Constants.CollidableNames.missileInstances:
                 Destroy(this.gameObject);
                 Destroy(collision.gameObject);
-                Instantiate(explosion, this.gameObject.transform.position, this.gameObject.transform.rotation);
+                //this must add points to the score
+                break;
+            case Constants.CollidableNames.player:
+                Destroy(this.gameObject);
+                Destroy(collision.gameObject);
+                //this doesnt
                 break;
             default:
                 break;
         }
     }
+
 }

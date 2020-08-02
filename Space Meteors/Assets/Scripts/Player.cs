@@ -8,12 +8,13 @@ public class Player : MonoBehaviour, IActions, IControllable
     #region Publics
 
     public GameObject playerObject;
+    public GameObject explosion;
 
     public float playerVelocity = 5.0f;
 
     public GameObject missileObject;
     [Range(1, 5)]
-    public uint maxLives = 3;
+    public uint playerLives = 3;
     public float fireCooldown = 1.5f;
     [Range(1f, 10f)]
     public float missileSpeed = 5.0f;
@@ -23,23 +24,36 @@ public class Player : MonoBehaviour, IActions, IControllable
 
     #region Privates
 
-    /*We can get xMinWorldBounds by multiplying + -1 of max as the value is the negative solution*/
     private float[] worldBounds = { -8.454f, 8.454f };
-    private uint currentLives;
     private float currentCooldown = 0f;
     private bool isDead = false;
     private Transform shootingLocation;
+    private Transform beforeDyingLocation;
 
     #endregion
 
     // Start is called before the first frame update
     private void Start()
     {
-        currentLives = maxLives;
-
         /*Get the shootingLocation*/
         shootingLocation = playerObject.transform.Find(Constants.GameSceneObjects.shootingLocation);
 
+    }
+    private void OnDestroy()
+    {
+        //die
+        isDead = true; //doesn't allow movement nor shooting
+        beforeDyingLocation = this.gameObject.transform;
+        Instantiate(explosion, this.gameObject.transform.position, this.gameObject.transform.rotation);
+        /*Call GameManager
+         *
+         * Game manager will:
+         ***    subtract a life
+         *      clear falling meteors
+         *      clear player missiles
+         *      stop moving meteors
+         *      spawn the player
+         */
     }
 
     // Update is called once per frame
@@ -140,9 +154,30 @@ public class Player : MonoBehaviour, IActions, IControllable
     }
     #endregion
 
+    //Accessible to the GameManager
+    public void SpawnPlayer()
+    {
+        Instantiate(this.gameObject, beforeDyingLocation.position, beforeDyingLocation.rotation);
+    }
 
     private void ResetCooldown()
     {
         currentCooldown = fireCooldown;
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        var collider = collision.GetComponent<Collider2D>();
+        switch (collider.name)
+        {
+            case Constants.CollidableNames.meteorMissileInstances:
+                Destroy(this.gameObject);
+                Destroy(collision.gameObject);
+                Instantiate(explosion, collision.gameObject.transform.position, collision.gameObject.transform.rotation);//explode the rock
+                break;
+            default:
+                break;
+        }
+    }
+
 }

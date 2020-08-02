@@ -5,17 +5,17 @@ using Assets.Scripts;
 
 namespace Assets.Scripts
 {
-    class ExplosionDestruction : MonoBehaviour, IInstantiable
+    class ExplosionDestruction : MonoBehaviour
     {
         public float destroyInSeconds = 5f;
 
 
         private void Start()
         {
-            OnDestroy();
+            Destroy();
         }
 
-        public void OnDestroy()
+        public void Destroy()
         {
             Destroy(gameObject, this.GetComponentInChildren<Animator>().GetCurrentAnimatorStateInfo(0).length -0.178f);
         }

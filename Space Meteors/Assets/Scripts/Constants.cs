@@ -24,6 +24,12 @@ namespace Assets.Scripts
         public static class CollidableNames
         {
             public const string missileInstances = "Missile(Clone)";
+            public const string meteorMissileInstances = "MeteorMissile(Clone)";
+            public const string player = "Player";
+        }
+
+        public static class Tags
+        {
             public const string player = "Player";
         }
     }
