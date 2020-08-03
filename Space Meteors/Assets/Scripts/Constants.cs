@@ -32,5 +32,10 @@ namespace Assets.Scripts
         {
             public const string player = "Player";
         }
+        public static class Scenes
+        {
+            public const string game = "Game";
+            public const string mainMenu = "Home";
+        }
     }
 }

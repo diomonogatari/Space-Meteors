@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Assets.Scripts;
+using System.Threading;
 
 public class GameController : MonoBehaviour
 {
@@ -20,10 +22,12 @@ public class GameController : MonoBehaviour
     private float xMovementOffset = 0.5f;
     private float yMovementOffset = 0.35f;
 
+    private Scene activeScene;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        activeScene = SceneManager.GetActiveScene();
     }
 
     // Update is called once per frame
@@ -31,6 +35,7 @@ public class GameController : MonoBehaviour
     {
         Move(enemyContainer);
         MovementCooldown();
+        CheckInput();
     }
 
     private bool CanMoveSides(float[] worldBounds, GameObject obj)
@@ -100,5 +105,39 @@ public class GameController : MonoBehaviour
     void ResetMovementCoolDown()
     {
         currentMoveCooldown = moveCooldown;
+    }
+
+    void CheckInput()
+    {
+        if (Input.GetButton(Constants.InputAxis.cancel))
+            if (activeScene.name.Equals(Constants.Scenes.game))
+                LoadHomeMenu();
+            else if (activeScene.name.Equals(Constants.Scenes.mainMenu))
+                Application.Quit();
+
+    }
+
+    void LoadHomeMenu()
+    {
+        SceneManager.LoadScene(Constants.Scenes.mainMenu);
+    }
+
+    void WinCondition()
+    {
+        //show win
+        
+        //wait...
+        Thread.Sleep(3000);
+        
+        //Menu Screen
+        LoadHomeMenu();
+    }
+    void LoseCondition()
+    {
+        //wait...
+        Thread.Sleep(3000);        
+        
+        //MenuScreen
+        LoadHomeMenu();
     }
 }

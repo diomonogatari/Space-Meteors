@@ -29,10 +29,7 @@ public class Enemy : MonoBehaviour, IActions
         shootingLocation = this.gameObject.transform.Find(Constants.GameSceneObjects.shootingLocation);
         gameController = this.gameObject.GetComponentInParent<GameController>();
     }
-    private void OnDestroy()
-    {
-        Instantiate(explosion, this.gameObject.transform.position, this.gameObject.transform.rotation);
-    }
+
     // Update is called once per frame
     void Update()
     {
@@ -115,11 +112,13 @@ public class Enemy : MonoBehaviour, IActions
                 Destroy(this.gameObject);
                 Destroy(collision.gameObject);
                 gameController.moveCooldown -= 0.055f;//I have 22 rocks and I start at 1.2f cooldown. Every rock that gets shot subtracts a relative equal part to the cooldown (1.2f / 22 = 0.(54)...
+                Instantiate(explosion, this.gameObject.transform.position, this.gameObject.transform.rotation);
                 //this must add points to the score
                 break;
             case Constants.CollidableNames.player:
                 Destroy(this.gameObject);
                 Destroy(collision.gameObject);
+                Instantiate(explosion, this.gameObject.transform.position, this.gameObject.transform.rotation);
                 //this doesnt
                 break;
             default:

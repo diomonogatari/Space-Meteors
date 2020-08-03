@@ -14,11 +14,9 @@ public class Player : MonoBehaviour, IActions, IControllable
 
     public GameObject missileObject;
     [Range(1, 5)]
-    public uint playerLives = 3;
     public float fireCooldown = 1.5f;
     [Range(1f, 10f)]
     public float missileSpeed = 5.0f;
-
     #endregion
 
 
@@ -29,6 +27,7 @@ public class Player : MonoBehaviour, IActions, IControllable
     private bool isDead = false;
     private Transform shootingLocation;
     private Transform beforeDyingLocation;
+    private GameController gameController;
 
     #endregion
 
@@ -37,23 +36,16 @@ public class Player : MonoBehaviour, IActions, IControllable
     {
         /*Get the shootingLocation*/
         shootingLocation = playerObject.transform.Find(Constants.GameSceneObjects.shootingLocation);
+        gameController = GetComponentInParent<GameController>();
 
     }
     private void OnDestroy()
     {
-        //die
-        isDead = true; //doesn't allow movement nor shooting
-        beforeDyingLocation = this.gameObject.transform;
+
+    }
+    private void PlayerDestroyed()
+    {
         Instantiate(explosion, this.gameObject.transform.position, this.gameObject.transform.rotation);
-        /*Call GameManager
-         *
-         * Game manager will:
-         ***    subtract a life
-         *      clear falling meteors
-         *      clear player missiles
-         *      stop moving meteors
-         *      spawn the player
-         */
     }
 
     // Update is called once per frame
@@ -174,6 +166,7 @@ public class Player : MonoBehaviour, IActions, IControllable
                 Destroy(this.gameObject);
                 Destroy(collision.gameObject);
                 Instantiate(explosion, collision.gameObject.transform.position, collision.gameObject.transform.rotation);//explode the rock
+                PlayerDestroyed();
                 break;
             default:
                 break;
