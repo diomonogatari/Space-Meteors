@@ -13,7 +13,7 @@ public class Player : MonoBehaviour, IActions, IControllable
     public float playerVelocity = 5.0f;
 
     public GameObject missileObject;
-    [Range(1, 5)]
+    [Range(0, 5)]
     public float fireCooldown = 1.5f;
     [Range(1f, 10f)]
     public float missileSpeed = 5.0f;
@@ -45,6 +45,7 @@ public class Player : MonoBehaviour, IActions, IControllable
     }
     private void PlayerDestroyed()
     {
+        gameController.isPlayerDead = true;
         Instantiate(explosion, this.gameObject.transform.position, this.gameObject.transform.rotation);
     }
 

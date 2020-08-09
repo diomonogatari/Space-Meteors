@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Assets.Scripts;
 using System.Threading;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -11,12 +12,14 @@ public class GameController : MonoBehaviour
     //I don't know who the enemies will be because there will be a lot of them
     public GameObject enemyContainer;
     public float moveCooldown = 1.2f;
+    public Text winText;
+    public Text loseText;
+    public bool isPlayerDead = false;
     //The GameController will not know who the enemies are, but the enemies, as they trigger lose conditions, will be able to communicate with the GameController
 
     private float[] worldBounds = { -3.38f, 3.552f };
     private float lowestPositionY = -3.59f;
     private float currentMoveCooldown = 0f;
-    private bool isPlayerDead = false;
     private bool enemyIsMovingLeft = true;
     private bool enemyMovesDown = false;
     private float xMovementOffset = 0.5f;
@@ -28,14 +31,22 @@ public class GameController : MonoBehaviour
     void Start()
     {
         activeScene = SceneManager.GetActiveScene();
+        winText.gameObject.SetActive(false);
+        loseText.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        CheckInput();
+
         Move(enemyContainer);
         MovementCooldown();
-        CheckInput();
+
+        if (isPlayerDead)
+            Lose();
+        if (!AreAnyEnemiesAlive() && !isPlayerDead)
+            Win();
     }
 
     private bool CanMoveSides(float[] worldBounds, GameObject obj)
@@ -122,22 +133,30 @@ public class GameController : MonoBehaviour
         SceneManager.LoadScene(Constants.Scenes.mainMenu);
     }
 
-    void WinCondition()
+    bool AreAnyEnemiesAlive()
     {
-        //show win
-        
-        //wait...
-        Thread.Sleep(3000);
-        
-        //Menu Screen
-        LoadHomeMenu();
+        if (enemyContainer.transform.childCount.Equals(0))
+            return false;//no enemies alive
+        return true; //enemies are alive
     }
-    void LoseCondition()
+
+    void Win()
     {
-        //wait...
-        Thread.Sleep(3000);        
-        
-        //MenuScreen
+        var playerScript = player.GetComponent<Player>();
+        playerScript.fireCooldown = 0.125f;
+        StartCoroutine(DisplayTextAndLoadHome(winText));
+    }
+    void Lose()
+    {
+        StartCoroutine(DisplayTextAndLoadHome(loseText));
+    }
+
+
+    IEnumerator DisplayTextAndLoadHome(Text text)
+    {
+        //Wait for 4 seconds
+        text.gameObject.SetActive(true);
+        yield return new WaitForSecondsRealtime(4);
         LoadHomeMenu();
     }
 }

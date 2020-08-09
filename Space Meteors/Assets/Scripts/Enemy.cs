@@ -119,7 +119,7 @@ public class Enemy : MonoBehaviour, IActions
                 Destroy(this.gameObject);
                 Destroy(collision.gameObject);
                 Instantiate(explosion, this.gameObject.transform.position, this.gameObject.transform.rotation);
-                //this doesnt
+                gameController.isPlayerDead = true;
                 break;
             default:
                 break;
